@@ -1,0 +1,1 @@
+ Repo for the *Advanced applied deep learning in physics and engineering* (1FA006, 2026) course.
