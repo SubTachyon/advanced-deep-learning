@@ -1,0 +1,180 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[paperwidth=210mm,paperheight=1800mm,margin=1.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+
+% No page numbers
+\pagestyle{empty}
+\makeatletter
+\let\ps@plain\ps@empty
+\makeatother
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\captionsetup{font=small,labelfont=bf}
+
+% Adjust this in one place if the plots live somewhere else.
+\newcommand{\plotdir}{../results}
+
+\newcommand{\resultpair}[5]{%
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/#1}
+        \caption{#2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/#3}
+        \caption{#4}
+    \end{subfigure}
+    \caption{#5}
+\end{figure}
+}
+
+\title{Exercise 3: Normalizing Flows for Stellar Labels and Uncertainties}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+This document shows the final plots for the three models I trained on the GALAH star spectra dataset. The models predict the stellar labels $T_{\mathrm{eff}}$, $\log g$, and $\mathrm{[Fe/H]}$, and they also try to predict the uncertainty of those values using negative log-likelihood training with Jammy Flows.
+
+I tested three versions of the model:
+\begin{itemize}
+    \item \textbf{Diagonal Gaussian flow}: treats the uncertainty of each target separately.
+    \item \textbf{Full Gaussian flow}: allows the three target uncertainties to be correlated.
+    \item \textbf{Gaussianization flow}: a more flexible flow that can model non-Gaussian output distributions.
+\end{itemize}
+
+\section*{Training Curves}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/diagonal_gaussian_loss.png}
+        \caption{Diagonal Gaussian}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/full_gaussian_loss.png}
+        \caption{Full Gaussian}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/full_flow_loss.png}
+        \caption{Gaussianization flow}
+    \end{subfigure}
+    \caption{Training and validation negative log-likelihood for the three flow models.}
+    \label{fig:all-losses}
+\end{figure}
+
+
+\section*{1. Diagonal Gaussian Flow}
+
+\resultpair
+    {diagonal_gaussian_t_eff_pred_vs_true.png}
+    {Predicted versus true $T_{\mathrm{eff}}$.}
+    {diagonal_gaussian_t_eff_pull.png}
+    {Pull distribution for $T_{\mathrm{eff}}$.}
+    {Diagonal Gaussian results for effective temperature. On the left, the predictions are compared with the true values. On the right, the pull distribution shows how reasonable the predicted uncertainties are.}
+
+\resultpair
+    {diagonal_gaussian_log_g_pred_vs_true.png}
+    {Predicted versus true $\log g$.}
+    {diagonal_gaussian_log_g_pull.png}
+    {Pull distribution for $\log g$.}
+    {Diagonal Gaussian results for surface gravity.}
+
+\resultpair
+    {diagonal_gaussian_fe_h_pred_vs_true.png}
+    {Predicted versus true $\mathrm{[Fe/H]}$.}
+    {diagonal_gaussian_fe_h_pull.png}
+    {Pull distribution for $\mathrm{[Fe/H]}$.}
+    {Diagonal Gaussian results for metallicity.}
+
+
+\section*{2. Full Gaussian Flow}
+
+\resultpair
+    {full_gaussian_t_eff_pred_vs_true.png}
+    {Predicted versus true $T_{\mathrm{eff}}$.}
+    {full_gaussian_t_eff_pull.png}
+    {Pull distribution for $T_{\mathrm{eff}}$.}
+    {Full Gaussian results for effective temperature. This version can model correlations between the uncertainties of the three predicted labels.}
+
+\resultpair
+    {full_gaussian_log_g_pred_vs_true.png}
+    {Predicted versus true $\log g$.}
+    {full_gaussian_log_g_pull.png}
+    {Pull distribution for $\log g$.}
+    {Full Gaussian results for surface gravity.}
+
+\resultpair
+    {full_gaussian_fe_h_pred_vs_true.png}
+    {Predicted versus true $\mathrm{[Fe/H]}$.}
+    {full_gaussian_fe_h_pull.png}
+    {Pull distribution for $\mathrm{[Fe/H]}$.}
+    {Full Gaussian results for metallicity.}
+
+
+\section*{3. Gaussianization Flow}
+
+\resultpair
+    {full_flow_t_eff_pred_vs_true.png}
+    {Predicted versus true $T_{\mathrm{eff}}$.}
+    {full_flow_t_eff_pull.png}
+    {Pull distribution for $T_{\mathrm{eff}}$.}
+    {Gaussianization-flow results for effective temperature. This is the most flexible model, because it can learn non-Gaussian prediction shapes.}
+
+\resultpair
+    {full_flow_log_g_pred_vs_true.png}
+    {Predicted versus true $\log g$.}
+    {full_flow_log_g_pull.png}
+    {Pull distribution for $\log g$.}
+    {Gaussianization-flow results for surface gravity.}
+
+\resultpair
+    {full_flow_fe_h_pred_vs_true.png}
+    {Predicted versus true $\mathrm{[Fe/H]}$.}
+    {full_flow_fe_h_pull.png}
+    {Pull distribution for $\mathrm{[Fe/H]}$.}
+    {Gaussianization-flow results for metallicity.}
+
+
+\section*{4. Example Predicted PDFs from the Gaussianization Flow}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{\plotdir/full_flow_pdf_example_0.png}
+    \caption{Example PDF predicted by the Gaussianization flow for one test star. The three panels show the sampled one-dimensional distributions for $T_{\mathrm{eff}}$, $\log g$, and $\mathrm{[Fe/H]}$, together with the true value and the sample mean.}
+    \label{fig:full-flow-pdf-0}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{\plotdir/full_flow_pdf_example_1.png}
+    \caption{Second example of a predicted PDF from the Gaussianization flow.}
+    \label{fig:full-flow-pdf-1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{\plotdir/full_flow_pdf_example_2.png}
+    \caption{Third example of a predicted PDF from the Gaussianization flow.}
+    \label{fig:full-flow-pdf-2}
+\end{figure}
+
+\end{document}

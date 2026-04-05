@@ -1,0 +1,11 @@
+## Written Summary
+
+For this exercise I took my previous astronomy CNN and upgraded it again, this time so it predicts a whole probability distribution for the three stellar labels instead of just a value or a simple Gaussian error bar.
+
+The data pipeline stayed basically the same as before. I used the GALAH spectra, kept the three targets `t_eff`, `log_g`, and `fe_h`, log-transformed the spectra, split the data into train/validation/test sets, and standardized everything using only the training set. The main new part was using `jammy_flows`. My CNN acts as an encoder that predicts the flow parameters, and then the normalizing flow gives a conditional PDF for the labels. I trained three versions: a diagonal Gaussian flow, a full Gaussian flow, and a Gaussianization flow. All of them were trained with negative log-likelihood.
+
+The results looked pretty decent. The predicted-vs-true plots followed the diagonal reasonably well for all three targets, so the models were clearly learning something real and not just hallucinating stellar parameters for fun. The pull plots also looked fairly sensible, which suggests the uncertainty estimates were not totally nonsense. The Gaussianization flow was the most interesting one, because it could produce more flexible PDFs instead of just plain Gaussian shapes.
+
+The hardest part was honestly understanding what exactly changes between the three flow types, because at first they all felt like slightly different ways of writing “Gaussian but with extra drama.” It also took me a while to understand that the network is not directly predicting the labels, but the parameters of the flow. Another slightly annoying issue was that the Gaussianization flow needed more care with numerical precision, and the plotting was more confusing too, because once you predict a full PDF, you have to decide what you even want to show: the true value, the sample mean, the width, the whole histogram, or all of the above.
+
+If I were improving this, I would compare the three models more quantitatively and probably tune the training a bit more. But overall I think the exercise worked, and I ended up with a much better understanding of how normalizing flows can be used for uncertainty prediction when a simple Gaussian model is too limited.
