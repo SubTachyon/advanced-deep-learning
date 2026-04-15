@@ -1,0 +1,95 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[paperwidth=210mm,paperheight=1100mm,margin=1.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+
+% No page numbers
+\pagestyle{empty}
+\makeatletter
+\let\ps@plain\ps@empty
+\makeatother
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\captionsetup{font=small,labelfont=bf}
+
+% Adjust this in one place if the plots live somewhere else.
+\newcommand{\plotdir}{../results}
+
+\newcommand{\resultpair}[5]{%
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/#1}
+        \caption{#2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/#3}
+        \caption{#4}
+    \end{subfigure}
+    \caption{#5}
+\end{figure}
+}
+
+\title{GNN Exercise: Neutrino Interaction Position Reconstruction}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+This is a quick summary of the final plots from the GNN model.
+
+The model uses three DynamicEdgeConv layers, then global mean pooling, then a small MLP to predict the interaction point in the $(x,y)$ plane.
+
+The plotting script only saves residual plots for $x$, so that is all included here.
+
+\section*{Training Curve}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\linewidth]{\plotdir/loss_curve.png}
+    \caption{Training and validation MSE over epochs. Just a quick check that training behaves sensibly.}
+    \label{fig:loss-curve}
+\end{figure}
+
+
+\section*{1. Overall Position Reconstruction}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\linewidth]{\plotdir/test_predictions.png}
+    \caption{True and predicted positions in the $(x,y)$ plane for the test set. This gives the overall picture.}
+    \label{fig:test-predictions}
+\end{figure}
+
+
+\section*{2. Residual Diagnostics}
+
+\resultpair
+    {x_bias_vs_radius.png}
+    {$x$ residual vs true radius.}
+    {x_residual_vs_true_x.png}
+    {$x$ residual vs true $x$.}
+    {Two simple $x$ residual checks. The left plot looks for radial bias, and the right one looks for any clear left--right shift.}
+
+
+\section*{3. Coordinate-wise Prediction Quality}
+
+\resultpair
+    {pred_vs_true_x.png}
+    {Predicted vs true $x$. The dashed red line is perfect prediction.}
+    {pred_vs_true_y.png}
+    {Predicted vs true $y$. The dashed red line is perfect prediction.}
+    {Predicted versus true values for each coordinate. Closer to the diagonal is better.}
+
+\end{document}
