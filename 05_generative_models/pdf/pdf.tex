@@ -1,0 +1,99 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[paperwidth=210mm,paperheight=430mm,margin=1.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[hidelinks]{hyperref}
+
+% No page numbers
+\pagestyle{empty}
+\makeatletter
+\let\ps@plain\ps@empty
+\makeatother
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\captionsetup{font=small,labelfont=bf}
+
+\newcommand{\plotdir}{../results}
+
+\title{Generative Models Exercise: MNIST Digit Generation}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+This is a quick summary of the final plots from the GAN model.
+
+The model was trained on MNIST to generate handwritten digits from random noise. To show how the results improve during training, I saved sample outputs at different epochs using the same fixed noise.
+
+\section*{Training Curve}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\linewidth]{\plotdir/loss_curve.png}
+    \caption{Generator and discriminator loss during training. Since this is a GAN, the losses are not as easy to read as in standard supervised learning, but they still give a rough idea of how training progressed.}
+\end{figure}
+
+\section*{Generated Samples During Training}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_before_training.png}
+        \caption{Before training}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_01.png}
+        \caption{Epoch 1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_05.png}
+        \caption{Epoch 5}
+    \end{subfigure}
+
+    \vspace{0.8em}
+
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_10.png}
+        \caption{Epoch 10}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_15.png}
+        \caption{Epoch 15}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_20.png}
+        \caption{Epoch 20}
+    \end{subfigure}
+
+    \vspace{0.8em}
+
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_25.png}
+        \caption{Epoch 25}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_30.png}
+        \caption{Epoch 30}
+    \end{subfigure}
+    \caption{Examples of generated digits during training. At the start the output is basically noise, but over time it becomes more digit-like.}
+\end{figure}
+
+\end{document}
