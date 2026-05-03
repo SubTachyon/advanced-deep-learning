@@ -1,0 +1,110 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[paperwidth=210mm,paperheight=500mm,margin=1.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+
+% No page numbers
+\pagestyle{empty}
+\makeatletter
+\let\ps@plain\ps@empty
+\makeatother
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\captionsetup{font=small,labelfont=bf}
+
+\newcommand{\plotdir}{../results}
+
+\newcommand{\resultpair}[5]{%
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/#1}
+        \caption{#2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/#3}
+        \caption{#4}
+    \end{subfigure}
+    \caption{#5}
+\end{figure}
+}
+
+\title{Diffusion Exercise: One-Dimensional Sample Generation}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+This report shows the final plots from the one-dimensional diffusion model.
+
+The target data is a mixture of two Gaussians with peaks near $-4$ and $4$. The model is a small MLP. It takes the noisy sample and the time step as input, and it predicts the noise that was added. To generate new samples, I start from Gaussian noise and run the learned reverse diffusion process.
+
+\section*{Training Curve}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\linewidth]{\plotdir/loss_curve.png}
+    \caption{Training and validation loss for predicting the added noise. The loss decreases quickly and then stays roughly constant, so 50 epochs is enough for this small example.}
+    \label{fig:loss-curve}
+\end{figure}
+
+
+\section*{Sampled Distributions During Training}
+
+\begin{figure}[H]
+    \centering
+
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_0010.png}
+        \caption{10 epochs}
+    \end{subfigure}
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_0020.png}
+        \caption{20 epochs}
+    \end{subfigure}
+
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_0030.png}
+        \caption{30 epochs}
+    \end{subfigure}
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_0040.png}
+        \caption{40 epochs}
+    \end{subfigure}
+
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/samples_epoch_0050.png}
+        \caption{50 epochs}
+    \end{subfigure}
+
+    \caption{Generated samples during training. The plots are ordered left-to-right and top-to-bottom. The model first learns a rough two-peak shape. By 40--50 epochs, the samples are close to the target distribution.}
+    \label{fig:samples-training}
+\end{figure}
+
+
+\section*{Reverse Diffusion Process}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\linewidth]{\plotdir/diffusion_stages.png}
+    \caption{Sample distributions during reverse diffusion. The samples start close to Gaussian noise. During the reverse process, they move into the two modes near $-4$ and $4$.}
+    \label{fig:diffusion-stages}
+\end{figure}
+
+\end{document}
