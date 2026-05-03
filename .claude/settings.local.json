@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import denoising_diffusion_pytorch.classifier_free_guidance as cfg; import inspect; print\\(inspect.getsource\\(cfg.Unet.forward\\)\\)\")",
+      "Bash(python -c \"import denoising_diffusion_pytorch.classifier_free_guidance as cfg; import inspect; src = inspect.getsource\\(cfg.Unet.__init__\\); print\\(src\\)\")",
+      "Bash(python:*)"
+    ]
+  }
+}
