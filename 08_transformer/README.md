@@ -1,0 +1,9 @@
+# Written Summary
+
+For this exercise I implemented a Transformer to predict the neutrino interaction position from the simulated IceCube-style photon data. Each event has a variable number of photon hits, and each hit has three features: detection time, detector x position, and detector y position. I kept the setup pretty similar to my earlier GNN exercise: load the parquet files, normalize the input features using only the training set, train with MSE loss, evaluate on the validation and test sets, and save a few result plots.
+
+The main new part was dealing with variable-length sequences. I used a custom collate function to keep track of how many hits each event has, then padded the sequences inside the model and used a padding mask so the Transformer ignores the fake padded hits. The model itself is fairly simple: an input embedding, a `TransformerEncoder` with 4 attention heads and 2 layers, masked mean pooling, and a small MLP that predicts the final `(x, y)` position.
+
+The final test results were a test loss of 2.0061, a test MAE of 0.8733, and a mean position error of 1.3731. The predicted-vs-true plots for both x and y followed the diagonal pretty well, so the model clearly learned useful position information. The reconstruction is still not perfect though. The error histogram has a tail of worse events, and the residual-vs-radius plots show that the errors get larger farther from the center, which is not too surprising for edge events.
+
+The most annoying part was getting the parquet data into the right tensor shape and making the padding and masking work correctly. The model works well enough for the exercise, but it could probably still be improved with more tuning, saving the best validation checkpoint, or trying a different pooling method like a CLS token instead of mean pooling.

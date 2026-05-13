@@ -1,0 +1,94 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[paperwidth=210mm,paperheight=700mm,margin=1.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+
+% No page numbers
+\pagestyle{empty}
+\makeatletter
+\let\ps@plain\ps@empty
+\makeatother
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\captionsetup{font=small,labelfont=bf}
+
+% Change this to "results" if this tex file is compiled from the exercise folder itself.
+\newcommand{\plotdir}{../results}
+
+\newcommand{\resultpair}[3]{%
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/#1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{\plotdir/#2}
+    \end{minipage}
+    \caption{#3}
+\end{figure}
+}
+
+\title{Transformer Exercise: Neutrino Position Reconstruction}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+This is a short summary of my transformer model for the 2D IceCube-inspired neutrino dataset. On the test set I got an MSE loss of 2.0061, an MAE of 0.8733, and a mean position error of 1.3731. The mean position error is the average distance between the predicted and true interaction positions.
+
+Each event is a variable-length list of photon hits. Each hit has three inputs: detection time, detector $x$ position, and detector $y$ position. I embedded these features, passed them through a transformer encoder, used a mask to ignore padding, mean-pooled the real hits, and predicted the interaction position $(x,y)$.
+
+The transformer uses 4 attention heads and 2 encoder layers, so it satisfies the exercise requirement. The padding and masking part is needed because different events have different numbers of photon hits.
+
+\section*{Training Curve}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\linewidth]{\plotdir/loss_curve.png}
+    \caption{Training and validation MSE over epochs.}
+    \label{fig:loss-curve}
+\end{figure}
+
+\section*{Overall Position Reconstruction}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.70\linewidth]{\plotdir/test_predictions.png}
+    \caption{True and predicted neutrino positions in the $(x,y)$ plane. The predictions cover the same general detector area as the true positions, but they are more spread out and less clean near the edges.}
+    \label{fig:test-predictions}
+\end{figure}
+
+\section*{Position Error Distribution}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\linewidth]{\plotdir/position_error_histogram.png}
+    \caption{Distribution of test position errors. Most events have a fairly small error, but there is a tail of harder events with much worse reconstruction.}
+    \label{fig:position-error-histogram}
+\end{figure}
+
+\section*{Coordinate-wise Prediction Quality}
+
+\resultpair
+    {pred_vs_true_x.png}
+    {pred_vs_true_y.png}
+    {The dashed line is perfect prediction. The points roughly follow the line, so the model is learning the position, but the scatter shows the remaining uncertainty.}
+
+\section*{Residual Diagnostics}
+
+\resultpair
+    {x_bias_vs_radius.png}
+    {y_bias_vs_radius.png}
+    {The residuals get wider toward the detector edge, so edge events seem harder to reconstruct. There is no obvious huge global offset.}
+
+\end{document}
